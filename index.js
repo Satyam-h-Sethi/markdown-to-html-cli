@@ -194,13 +194,39 @@ ${bodyHtml}
 </html>`;
 }
 
+function startServer(port = 3000) {
+  const http = require('http');
+  const htmlPath = path.join(__dirname, 'index.html');
+  const server = http.createServer((req, res) => {
+    if (fs.existsSync(htmlPath)) {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(fs.readFileSync(htmlPath));
+    } else {
+      res.writeHead(404);
+      res.end('Web UI not found');
+    }
+  });
+  server.listen(port, () => {
+    console.log(`Markdown Studio Web UI running at http://localhost:${port}`);
+  });
+}
+
 function main() {
   const args = process.argv.slice(2);
+  if (args.includes('--web') || args.includes('-w')) {
+    const portIndex = args.findIndex(a => a === '--web' || a === '-w');
+    const port = parseInt(args[portIndex + 1], 10) || 3000;
+    startServer(port);
+    return;
+  }
+
   if (args.length === 0 || args.includes('-h') || args.includes('--help')) {
     console.log(`
 Usage: md2html <input.md> [output.html] [--title "Page Title"]
+       md2html --web [port]
 
 Options:
+  --web, -w      Launch the browser Web Studio (default port: 3000)
   --title, -t    Set page HTML title
   --help, -h     Show this help message
     `);

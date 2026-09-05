@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown to HTML Studio</title>
+  <style>
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --bg: #090d16;
+      --bg-card: rgba(18, 26, 44, 0.75);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-focus: #3b82f6;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: radial-gradient(circle at 50% 0%, #172554 0%, var(--bg) 75%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(9, 13, 22, 0.8);
+      backdrop-filter: blur(12px);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .actions { display: flex; gap: 10px; align-items: center; }
+    button, .btn {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button:hover, .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    button.primary, .btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.35);
+    }
+    button.primary:hover, .btn.primary:hover {
+      background: var(--primary-hover);
+    }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px 24px;
+      min-height: 0;
+    }
+    @media (max-width: 768px) {
+      main { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(12px);
+    }
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 16px;
+      resize: none;
+      outline: none;
+    }
+    .preview-container {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    .preview-container h1, .preview-container h2, .preview-container h3 {
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 0.3em;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      color: #f0f6fc;
+    }
+    .preview-container p, .preview-container ul, .preview-container ol {
+      margin-bottom: 14px;
+    }
+    .preview-container code {
+      background: #161b22;
+      padding: 0.2em 0.4em;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 85%;
+    }
+    .preview-container pre {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 14px;
+      overflow-x: auto;
+      margin-bottom: 14px;
+    }
+    .preview-container blockquote {
+      border-left: 4px solid #3b82f6;
+      padding-left: 12px;
+      color: #8b949e;
+      margin-bottom: 14px;
+    }
+    .preview-container hr {
+      border: 0;
+      border-top: 1px solid #30363d;
+      margin: 20px 0;
+    }
+    .preview-container a { color: #58a6ff; text-decoration: none; }
+    .preview-container a:hover { text-decoration: underline; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span>📝 Markdown Studio</span>
+      <span class="logo-badge">Live UI</span>
+    </div>
+    <div class="actions">
+      <button id="copyHtmlBtn">📋 Copy HTML</button>
+      <button class="primary" id="downloadBtn">⬇️ Export Standalone HTML</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="panel">
+      <div class="panel-header">
+        <span>Markdown Input</span>
+        <span id="charCount">0 chars</span>
+      </div>
+      <textarea id="markdownInput" placeholder="Type or paste Markdown here..."></textarea>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span>Rendered Live Preview</span>
+        <span>HTML5</span>
+      </div>
+      <div class="preview-container" id="previewPane"></div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    const defaultMarkdown = `# ✨ Markdown Studio
+
+Welcome to the **live interactive studio**!
+
+## Highlights
+- **Zero dependencies**: Pure vanilla JS & CSS
+- Real-time instant rendering
+- Syntax-styled code blocks and quotes
+
+### Sample Code
+\`\`\`javascript
+function calculateScore(items) {
+  return items.reduce((acc, curr) => acc + curr.points, 0);
+}
+\`\`\`
+
+> "Good design is as little design as possible." — Dieter Rams
+
+Feel free to edit this text or export full standalone HTML pages!`;
+
+    function parseMarkdown(md) {
+      let html = md;
+      const codeBlocks = [];
+      html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+        const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const token = `__CODE_BLOCK_${codeBlocks.length}__`;
+        codeBlocks.push(`<pre><code class="language-${lang || 'text'}">${escaped}</code></pre>`);
+        return token;
+      });
+
+      const inlineCodes = [];
+      html = html.replace(/`([^`]+)`/g, (match, code) => {
+        const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const token = `__INLINE_CODE_${inlineCodes.length}__`;
+        inlineCodes.push(`<code>${escaped}</code>`);
+        return token;
+      });
+
+      html = html.replace(/^######\s+(.+)$/gm, '<h6>$1</h6>');
+      html = html.replace(/^#####\s+(.+)$/gm, '<h5>$1</h5>');
+      html = html.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
+      html = html.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+      html = html.replace(/^(?:---|\*\*\*|___)\s*$/gm, '<hr />');
+      html = html.replace(/^>\s+(.+)$/gm, '<blockquote>$1</blockquote>');
+      html = html.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />');
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      html = html.replace(/^\s*[-*+]\s+(.+)$/gm, '<li>$1</li>');
+      html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+
+      const lines = html.split('\n\n');
+      const processed = lines.map(block => {
+        block = block.trim();
+        if (!block) return '';
+        if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<ol') || block.startsWith('<blockquote') || block.startsWith('<hr') || block.startsWith('__CODE_BLOCK_')) {
+          return block;
+        }
+        return `<p>${block.replace(/\n/g, '<br />')}</p>`;
+      });
+      html = processed.join('\n\n');
+
+      codeBlocks.forEach((block, idx) => { html = html.replace(`__CODE_BLOCK_${idx}__`, block); });
+      inlineCodes.forEach((code, idx) => { html = html.replace(`__INLINE_CODE_${idx}__`, code); });
+      return html;
+    }
+
+    const input = document.getElementById('markdownInput');
+    const preview = document.getElementById('previewPane');
+    const charCount = document.getElementById('charCount');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function update() {
+      const val = input.value;
+      charCount.textContent = `${val.length} chars`;
+      preview.innerHTML = parseMarkdown(val);
+    }
+
+    input.value = defaultMarkdown;
+    update();
+    input.addEventListener('input', update);
+
+    document.getElementById('copyHtmlBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(preview.innerHTML).then(() => showToast('HTML copied!'));
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const fullDoc = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Exported Markdown</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #24292e; }
+    pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; }
+    code { background: #f6f8fa; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    blockquote { border-left: 4px solid #0969da; padding-left: 12px; color: #57606a; margin: 0; }
+  </style>
+</head>
+<body>\n${preview.innerHTML}\n</body>
+</html>`;
+      const blob = new Blob([fullDoc], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'document.html';
+      a.click();
+      showToast('Downloaded document.html!');
+    });
+  </script>
+</body>
+</html>

@@ -1,21 +1,21 @@
 # markdown-to-html-cli
 
-A clean, fast, zero-dependency command-line tool to convert Markdown files into standalone, responsive HTML documents with modern light/dark mode CSS embedded.
+A clean, fast, zero-dependency Markdown converter and interactive Web Studio with modern light/dark mode styling.
 
 ## What it does
 
-Parses standard Markdown syntax (headings, bold/italic, inline code, code blocks, lists, blockquotes, links, and horizontal rules) and produces a self-contained `.html` file ready to share or view in any browser.
+Parses standard Markdown syntax (headings, bold/italic, inline code, code blocks, lists, blockquotes, links, and horizontal rules) and produces a self-contained `.html` file. Also includes an interactive live web studio.
 
 ## Features
 
-- **Zero dependencies**: Powered entirely by native Node.js.
+- **Interactive Web Studio**: Live split-pane editor with instant HTML rendering and one-click export.
+- **Zero dependencies**: Powered entirely by native Node.js and vanilla Web APIs.
 - **Embedded modern CSS**: Automatically supports OS light and dark color schemes.
-- **Standalone output**: Generates a complete HTML document with clean typography.
-- **Customizable**: Allows setting custom document `<title>`.
+- **Standalone CLI**: Convert files directly from the command line.
 
 ## Setup
 
-Requires Node.js (v14+). No external package installation needed.
+Requires Node.js (v14+). No external dependencies.
 
 ```bash
 cd markdown-to-html-cli
@@ -23,21 +23,24 @@ cd markdown-to-html-cli
 
 ## Run command
 
+### Launch Web Studio UI
+```bash
+node index.js --web
+# Open http://localhost:3000
+```
+*(Or simply open `index.html` directly in any browser)*
+
+### CLI Usage
 ```bash
 node index.js sample.md output.html --title "My Notes"
-```
-
-Or run the default npm script:
-```bash
-npm start
 ```
 
 ## Example usage
 
 ```bash
-# Convert a README to an HTML page
-node index.js README.md readme.html
+# Start web UI on custom port
+node index.js --web 8080
 
-# Convert with a custom title
-node index.js notes.md notes.html --title "Project Architecture"
+# Convert README to an HTML page via CLI
+node index.js README.md readme.html
 ```
