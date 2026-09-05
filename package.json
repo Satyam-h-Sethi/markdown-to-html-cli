@@ -1,0 +1,15 @@
+{
+  "name": "markdown-to-html-cli",
+  "version": "1.0.0",
+  "description": "Zero-dependency CLI tool to convert Markdown files into styled standalone HTML pages",
+  "main": "index.js",
+  "bin": {
+    "md2html": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js sample.md output.html"
+  },
+  "keywords": ["markdown", "html", "converter", "cli", "zero-dependency"],
+  "author": "",
+  "license": "MIT"
+}

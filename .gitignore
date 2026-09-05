@@ -1,0 +1,6 @@
+# Common ignore patterns
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db
