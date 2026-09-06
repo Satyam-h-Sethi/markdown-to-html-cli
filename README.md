@@ -1,6 +1,14 @@
 # markdown-to-html-cli
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-markdown.satyamsethi.dpdns.org-3b82f6?style=for-the-badge&logo=cloudflare&logoColor=white)](https://markdown.satyamsethi.dpdns.org)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deployment-F38020?style=for-the-badge&logo=cloudflarepages&logoColor=white)](https://markdown-to-html-cli.pages.dev)
+
 A clean, fast, zero-dependency Markdown converter and interactive Web Studio with modern light/dark mode styling.
+
+## 🌐 Live Demo
+
+- **Primary Custom Domain**: [https://markdown.satyamsethi.dpdns.org](https://markdown.satyamsethi.dpdns.org)
+- **Cloudflare Pages Direct**: [https://markdown-to-html-cli.pages.dev](https://markdown-to-html-cli.pages.dev)
 
 ## What it does
 
